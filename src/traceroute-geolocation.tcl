@@ -156,6 +156,16 @@ proc display_traceroute_result {} {
         # ARG3: prefix name of output pictures
         # ARG4: destination IP in title
         if {[catch {exec $::gnuplot_bin -c $::traceroute_geolocation_gnuplot $::world_map_data [file join $env(HOME) $gnuplot_file_name] [file join $env(HOME) [string cat $ip_address "_" $timestamp]] $ip_address} output] == 0} {
+            # create a photo widget
+            set image_file_name [file join $env(HOME) [string cat $ip_address "_" $timestamp ".png"]]
+            toplevel .map
+            wm title .map "TraceRoute GeoLocation Routing Map"
+            set map [image create photo -file $image_file_name]
+            label .map.img -image $map -anchor center
+
+            grid columnconfigure .map 0 -weight 1
+            grid rowconfigure .map 0 -weight 1
+            grid .map.img
         } else {
             # pop up a window if gnuplot is failed
             tk_messageBox -message "Failed to execute gnuplot command: $output" -icon error
