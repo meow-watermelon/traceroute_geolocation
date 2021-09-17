@@ -8,6 +8,12 @@ wm title . "TraceRoute GeoLocation Utility"
 wm geometry . "1200x600"
 wm minsize . 900 600
 
+# define initial variables
+set traceroute_bin "/usr/bin/traceroute"
+set gnuplot_bin "/usr/bin/gnuplot"
+set world_map_data "/usr/share/doc/gnuplot-doc/demo/world.dat"
+set traceroute_geolocation_gnuplot "traceroute-geolocation.gnuplot"
+
 # entry insert proc
 proc entry_insert {entry_name value color} {
     $entry_name configure -state normal
@@ -41,7 +47,7 @@ proc get_ip_info_dict {ip_address} {
 proc get_traceroute_ip_addresses {ip_address} {
     set traceroute_ip_list {}
 
-    if {[catch {exec traceroute $ip_address -n -q1} traceroute_result] == 0} {
+    if {[catch {exec $::traceroute_bin $ip_address -n -q1} traceroute_result] == 0} {
         # skip traceroute result header by using lrange
         foreach result_entry [lrange [split $traceroute_result "\n"] 1 end] {
             lappend traceroute_ip_list [lindex $result_entry 1]
@@ -65,6 +71,12 @@ proc display_traceroute_result {} {
 
     # process IP address
     if {[string equal ip_address ""] == 0} {
+        # create gnuplot data file
+        global env
+        set timestamp [clock seconds]
+        set gnuplot_file_name [string cat $ip_address "_" $timestamp ".gnuplot"]
+        set gnuplot_file [open [file join $env(HOME) $gnuplot_file_name] w]
+
         # get traceroute result
         set traceroute_ip_list [get_traceroute_ip_addresses $ip_address]
 
@@ -106,6 +118,11 @@ proc display_traceroute_result {} {
                         entry_insert .traceroute_data.entry_latitude_$e [dict get $ip_info "latitude"] "light green"
                         entry_insert .traceroute_data.entry_longitude_$e [dict get $ip_info "longitude"] "light green"
                         entry_insert .traceroute_data.entry_isp_$e [dict get $ip_info "isp"] "light green"
+
+                        # write data points to gnuplot file
+                        # format: <longitude> <latitude> <city_name>
+                        set gnuplot_entry [string cat [dict get $ip_info "longitude"] " " [dict get $ip_info "latitude"] " " \"[dict get $ip_info "city"]\"]
+                        puts $gnuplot_file $gnuplot_entry
                     } else {
                         entry_insert .traceroute_data.entry_ip_$e "API ERROR" "red"
                         entry_insert .traceroute_data.entry_continent_$e "API ERROR" "red"
@@ -129,6 +146,20 @@ proc display_traceroute_result {} {
 
                 incr e 1
             }
+
+        close $gnuplot_file
+
+        # create geolocation graph
+        # ARG0: gnuplot script
+        # ARG1: world map data
+        # ARG2: traceroute geolocation data
+        # ARG3: prefix name of output pictures
+        # ARG4: destination IP in title
+        if {[catch {exec $::gnuplot_bin -c $::traceroute_geolocation_gnuplot $::world_map_data [file join $env(HOME) $gnuplot_file_name] [file join $env(HOME) [string cat $ip_address "_" $timestamp]] $ip_address} output] == 0} {
+        } else {
+            # pop up a window if gnuplot is failed
+            tk_messageBox -message "Failed to execute gnuplot command: $output" -icon error
+        }
         } else {
             # pop up a window if traceroute is failed
             tk_messageBox -message "Failed to execute traceroute command!" -icon error
