@@ -2,7 +2,7 @@
 
 ## Introduction
 
-TraceRoute GeoLocation Utility is a GUI program to run `traceroute` program and plotting the routing map via [GNUPlot](http://www.gnuplot.info/). The IP WHOIS information source is from [IPWHOIS](https://ipwhois.io/). The program is written by Tcl language.
+TraceRoute GeoLocation Utility is a GUI program to run `traceroute` program and plotting the routing map via [gnuplot](http://www.gnuplot.info/). The IP WHOIS information source is from [IPWHOIS](https://ipwhois.io/). The program is written by Tcl language.
 
 ## Requirements
 
@@ -19,11 +19,11 @@ The current code is tested and passed in the following environment:
 * TclLib: tcllib-1.19-6
 * Tk: tk-8.6.10-6
 * traceroute: 2.1.0
-* GNUPlot: 5.2 patchlevel 8
+* gnuplot: 5.2 patchlevel 8
 
 ## Usage
 
-Before running this utility, user needs to check following variables in `traceroute-geolocation.tcl` to make sure `traceroute` / `gnuplot` binaries are pointing to correct paths. Also, to plot the routing map, it needs to use a world map data points file from GNUPlot. The file can be downloaded [here](https://github.com/gnuplot/gnuplot/blob/master/demo/world.dat). 
+Before running this utility, user needs to check following variables in `traceroute-geolocation.tcl` to make sure `traceroute` / `gnuplot` binaries are pointing to correct paths. Also, to plot the routing map, it needs to use a world map data points file from gnuplot. The file can be downloaded [here](https://github.com/gnuplot/gnuplot/blob/master/demo/world.dat). 
 
 Here are default variables settings:
 
@@ -43,7 +43,7 @@ If due to the IP range or other reasons the IPWHOIS API could not get correct in
 
 Once the whole TraceRoute process is done, a geolocation data points file will be created under user's home directory.
 
-The file `traceroute-geolocation.gnuplot` is a GNUPlot script to generate graphs. By default, it will create 2 images in PNG and SVG formats with `1280x960` size under user's home directory. I suggest user puts `traceroute-geolocation.tcl` and `traceroute-geolocation.gnuplot` in the same directory.
+The file `traceroute-geolocation.gnuplot` is a gnuplot script to generate graphs. By default, it will create 2 images in PNG and SVG formats with `1280x960` size under user's home directory. I suggest user puts `traceroute-geolocation.tcl` and `traceroute-geolocation.gnuplot` in the same directory.
 
 ## Known Issues
 
