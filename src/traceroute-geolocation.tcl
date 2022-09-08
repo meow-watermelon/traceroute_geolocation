@@ -180,7 +180,7 @@ proc display_traceroute_result {} {
 # main UI
 
 label .ip_address -text "IP ADDRESS" -justify left
-entry .ip_input -width 128 -justify right
+entry .ip_input -width 128 -justify left
 
 labelframe .traceroute_data -text "TRACEROUTE IP INFORMATION" -labelanchor n
 
